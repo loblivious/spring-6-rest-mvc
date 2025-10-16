@@ -33,8 +33,7 @@ public class BeerController {
 
     beerService.patchBeerById(beerId, beer);
 
-    return ResponseEntity.noContent()
-        .build();
+    return ResponseEntity.noContent().build();
   }
 
   @DeleteMapping("{beerId}")
@@ -43,8 +42,7 @@ public class BeerController {
 
     beerService.deleteBeerById(beerId);
 
-    return ResponseEntity.noContent()
-        .build();
+    return ResponseEntity.noContent().build();
   }
 
   @PutMapping("{beerId}")
@@ -54,8 +52,7 @@ public class BeerController {
 
     beerService.updateBeerById(beerId, beer);
 
-    return ResponseEntity.noContent()
-        .build();
+    return ResponseEntity.noContent().build();
   }
 
   @PostMapping
@@ -64,8 +61,7 @@ public class BeerController {
 
     Beer savedBeer = beerService.saveNewBeer(beer);
 
-    return ResponseEntity.created(URI.create("/api/v1/beer/" + savedBeer.getId()))
-        .build();
+    return ResponseEntity.created(URI.create("/api/v1/beer/" + savedBeer.getId())).build();
   }
 
   @GetMapping

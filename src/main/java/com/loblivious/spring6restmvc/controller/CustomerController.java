@@ -33,8 +33,7 @@ public class CustomerController {
 
     customerService.patchCustomerById(customerId, customer);
 
-    return ResponseEntity.noContent()
-        .build();
+    return ResponseEntity.noContent().build();
   }
 
   @DeleteMapping("{customerId}")
@@ -43,8 +42,7 @@ public class CustomerController {
 
     customerService.deleteCustomerById(customerId);
 
-    return ResponseEntity.noContent()
-        .build();
+    return ResponseEntity.noContent().build();
   }
 
   @PutMapping(value = "{customerId}")
@@ -54,8 +52,7 @@ public class CustomerController {
 
     customerService.updateCustomerById(customerId, customer);
 
-    return ResponseEntity.noContent()
-        .build();
+    return ResponseEntity.noContent().build();
   }
 
   @PostMapping
@@ -64,8 +61,7 @@ public class CustomerController {
 
     Customer savedCustomer = customerService.saveNewCustomer(customer);
 
-    return ResponseEntity.created(URI.create("/api/v1/customer/" + savedCustomer.getId()))
-        .build();
+    return ResponseEntity.created(URI.create("/api/v1/customer/" + savedCustomer.getId())).build();
   }
 
   @GetMapping
