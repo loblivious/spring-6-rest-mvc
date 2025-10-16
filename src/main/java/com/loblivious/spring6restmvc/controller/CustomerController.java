@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +23,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class CustomerController {
 
   private final CustomerService customerService;
+
+  @PutMapping(value = "{customerId}")
+  public ResponseEntity<Void> updateCustomerById(@PathVariable("customerId") UUID customerId,
+      @RequestBody Customer customer) {
+    log.info("Received Customer put request: customerId={}, customer={}", customerId, customer);
+
+    customerService.updateCustomerById(customerId, customer);
+
+    return ResponseEntity.noContent().build();
+  }
 
   @PostMapping
   public ResponseEntity<Void> createCustomer(@RequestBody Customer customer) {
@@ -40,7 +51,7 @@ public class CustomerController {
 
   @GetMapping(value = "{customerId}")
   public Customer getCustomerById(@PathVariable("customerId") UUID id) {
-    log.debug("Get Customer by Id - in controller");
+    log.info("Get Customer by Id - in controller");
 
     return customerService.getCustomerById(id);
   }
