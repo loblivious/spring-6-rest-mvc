@@ -15,18 +15,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/beer")
 public class BeerController {
+
+  public static final String BEER_PATH = "/api/v1/beer";
+  public static final String BEER_PATH_ID = BEER_PATH + "/{beerId}";
 
   private final BeerService beerService;
 
-  @PatchMapping("{beerId}")
+  @PatchMapping(BEER_PATH_ID)
   public ResponseEntity<Void> patchBeerById(@PathVariable("beerId") UUID beerId,
       @RequestBody Beer beer) {
     log.info("Patching beer with id {}", beerId);
@@ -36,7 +37,7 @@ public class BeerController {
     return ResponseEntity.noContent().build();
   }
 
-  @DeleteMapping("{beerId}")
+  @DeleteMapping(BEER_PATH_ID)
   public ResponseEntity<Void> deleteBeerById(@PathVariable("beerId") UUID beerId) {
     log.info("Deleting Beer with id {}", beerId);
 
@@ -45,7 +46,7 @@ public class BeerController {
     return ResponseEntity.noContent().build();
   }
 
-  @PutMapping("{beerId}")
+  @PutMapping(BEER_PATH_ID)
   public ResponseEntity<Void> updateBeerById(@PathVariable("beerId") UUID beerId,
       @RequestBody Beer beer) {
     log.info("Received Beer put request: beerId={}, beer={}", beerId, beer);
@@ -55,21 +56,21 @@ public class BeerController {
     return ResponseEntity.noContent().build();
   }
 
-  @PostMapping
+  @PostMapping(BEER_PATH)
   public ResponseEntity<Void> createBeer(@RequestBody Beer beer) {
     log.info("Received Beer post request: {}", beer);
 
     Beer savedBeer = beerService.saveNewBeer(beer);
 
-    return ResponseEntity.created(URI.create("/api/v1/beer/" + savedBeer.getId())).build();
+    return ResponseEntity.created(URI.create(BEER_PATH + savedBeer.getId())).build();
   }
 
-  @GetMapping
+  @GetMapping(BEER_PATH)
   public List<Beer> listBeers() {
     return beerService.listBeers();
   }
 
-  @GetMapping(value = "{beerId}")
+  @GetMapping(BEER_PATH_ID)
   public Beer getBeerById(@PathVariable("beerId") UUID beerId) {
     log.info("Get Beer by Id - in controller");
 
