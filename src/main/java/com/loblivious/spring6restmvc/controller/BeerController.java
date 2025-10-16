@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,12 @@ public class BeerController {
     log.info("Received Beer post request: {}", beer);
 
     Beer savedBeer = beerService.saveNewBeer(beer);
-    return new ResponseEntity<>(savedBeer, HttpStatus.CREATED);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("Location", "/api/v1/beer/" + savedBeer.getId()
+        .toString());
+
+    return new ResponseEntity<>(headers, HttpStatus.CREATED);
   }
 
   @GetMapping
