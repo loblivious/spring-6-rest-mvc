@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j
@@ -82,5 +83,18 @@ public class CustomerServiceImpl implements CustomerService {
   @Override
   public void deleteCustomerById(UUID customerId) {
     customerMap.remove(customerId);
+  }
+
+  @Override
+  public void patchCustomerById(UUID customerId, Customer customer) {
+    Customer existingCustomer = customerMap.get(customerId);
+
+    if (existingCustomer == null) {
+      return;
+    }
+
+    if (StringUtils.hasText(customer.getName())) {
+      existingCustomer.setName(customer.getName());
+    }
   }
 }
