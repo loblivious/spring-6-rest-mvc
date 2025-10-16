@@ -8,6 +8,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,17 @@ public class BeerController {
 
   private final BeerService beerService;
 
-  @PutMapping("/{beerId}")
+  @DeleteMapping("{beerId}")
+  public ResponseEntity<Void> deleteBeerById(@PathVariable("beerId") UUID beerId) {
+    log.info("Deleting Beer with id {}", beerId);
+
+    beerService.deleteBeerById(beerId);
+
+    return ResponseEntity.noContent()
+        .build();
+  }
+
+  @PutMapping("{beerId}")
   public ResponseEntity<Void> updateBeerById(@PathVariable("beerId") UUID beerId,
       @RequestBody Beer beer) {
     log.info("Received Beer put request: beerId={}, beer={}", beerId, beer);
@@ -50,7 +61,7 @@ public class BeerController {
     return beerService.listBeers();
   }
 
-  @GetMapping(value = "/{beerId}")
+  @GetMapping(value = "{beerId}")
   public Beer getBeerById(@PathVariable("beerId") UUID beerId) {
     log.info("Get Beer by Id - in controller");
 
