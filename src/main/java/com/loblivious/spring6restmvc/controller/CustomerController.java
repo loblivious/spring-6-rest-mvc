@@ -1,6 +1,6 @@
 package com.loblivious.spring6restmvc.controller;
 
-import com.loblivious.spring6restmvc.model.Customer;
+import com.loblivious.spring6restmvc.model.CustomerDTO;
 import com.loblivious.spring6restmvc.services.CustomerService;
 import java.net.URI;
 import java.util.List;
@@ -29,7 +29,7 @@ public class CustomerController {
 
   @PatchMapping(CUSTOMER_PATH_ID)
   public ResponseEntity<Void> patchCustomerById(@PathVariable("customerId") UUID customerId,
-      @RequestBody Customer customer) {
+      @RequestBody CustomerDTO customer) {
     log.info("Patching customer with id {}", customerId);
 
     customerService.patchCustomerById(customerId, customer);
@@ -48,7 +48,7 @@ public class CustomerController {
 
   @PutMapping(value = CUSTOMER_PATH_ID)
   public ResponseEntity<Void> updateCustomerById(@PathVariable("customerId") UUID customerId,
-      @RequestBody Customer customer) {
+      @RequestBody CustomerDTO customer) {
     log.info("Received Customer put request: customerId={}, customer={}", customerId, customer);
 
     customerService.updateCustomerById(customerId, customer);
@@ -57,21 +57,21 @@ public class CustomerController {
   }
 
   @PostMapping(CUSTOMER_PATH)
-  public ResponseEntity<Void> createCustomer(@RequestBody Customer customer) {
+  public ResponseEntity<Void> createCustomer(@RequestBody CustomerDTO customer) {
     log.info("Received Customer post request: {}", customer);
 
-    Customer savedCustomer = customerService.saveNewCustomer(customer);
+    CustomerDTO savedCustomer = customerService.saveNewCustomer(customer);
 
     return ResponseEntity.created(URI.create(CUSTOMER_PATH + savedCustomer.getId())).build();
   }
 
   @GetMapping(CUSTOMER_PATH)
-  public List<Customer> listCustomers() {
+  public List<CustomerDTO> listCustomers() {
     return customerService.getAllCustomers();
   }
 
   @GetMapping(CUSTOMER_PATH_ID)
-  public Customer getCustomerById(@PathVariable("customerId") UUID id) {
+  public CustomerDTO getCustomerById(@PathVariable("customerId") UUID id) {
     log.info("Get Customer by Id - in controller");
 
     return customerService.getCustomerById(id);

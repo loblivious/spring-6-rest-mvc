@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loblivious.spring6restmvc.exception.NotFoundException;
-import com.loblivious.spring6restmvc.model.Customer;
+import com.loblivious.spring6restmvc.model.CustomerDTO;
 import com.loblivious.spring6restmvc.services.CustomerService;
 import com.loblivious.spring6restmvc.services.CustomerServiceImpl;
 import java.util.HashMap;
@@ -51,7 +51,7 @@ class CustomerControllerTest {
   CustomerServiceImpl customerServiceImpl;
 
   @Captor
-  ArgumentCaptor<Customer> customerArgumentCaptor;
+  ArgumentCaptor<CustomerDTO> customerArgumentCaptor;
 
   @Captor
   ArgumentCaptor<UUID> uuidArgumentCaptor;
@@ -73,7 +73,7 @@ class CustomerControllerTest {
   @Test
   @SneakyThrows
   void testPatchCustomer() {
-    Customer customer = customerServiceImpl.getAllCustomers().getFirst();
+    CustomerDTO customer = customerServiceImpl.getAllCustomers().getFirst();
 
     Map<String, Object> customerMap = new HashMap<>();
     customerMap.put("name", "John Doe");
@@ -94,7 +94,7 @@ class CustomerControllerTest {
   @Test
   @SneakyThrows
   void testDeleteCustomerById() {
-    Customer customer = customerServiceImpl.getAllCustomers().getFirst();
+    CustomerDTO customer = customerServiceImpl.getAllCustomers().getFirst();
 
     mockMvc.perform(delete(CUSTOMER_PATH_ID, customer.getId())
             .accept(MediaType.APPLICATION_JSON))
@@ -109,7 +109,7 @@ class CustomerControllerTest {
   @Test
   @SneakyThrows
   void testUpdateCustomer() {
-    Customer customer = customerServiceImpl.getAllCustomers().getFirst();
+    CustomerDTO customer = customerServiceImpl.getAllCustomers().getFirst();
 
     mockMvc.perform(put(CUSTOMER_PATH_ID, customer.getId())
             .accept(MediaType.APPLICATION_JSON)
@@ -117,15 +117,15 @@ class CustomerControllerTest {
             .content(objectMapper.writeValueAsString(customer)))
         .andExpect(status().isNoContent());
 
-    verify(customerService).updateCustomerById(any(UUID.class), any(Customer.class));
+    verify(customerService).updateCustomerById(any(UUID.class), any(CustomerDTO.class));
   }
 
   @Test
   @SneakyThrows
   void testCreateNewCustomer() {
-    Customer newCustomer = Customer.builder().name("New Customer").build();
+    CustomerDTO newCustomer = CustomerDTO.builder().name("New Customer").build();
 
-    given(customerService.saveNewCustomer(any(Customer.class))).willReturn(
+    given(customerService.saveNewCustomer(any(CustomerDTO.class))).willReturn(
         customerServiceImpl.getAllCustomers().get(1));
 
     mockMvc.perform(post(CUSTOMER_PATH).accept(MediaType.APPLICATION_JSON)
@@ -150,7 +150,7 @@ class CustomerControllerTest {
   @Test
   @SneakyThrows
   void testGetCustomerById() {
-    Customer testCustomer = customerServiceImpl.getAllCustomers()
+    CustomerDTO testCustomer = customerServiceImpl.getAllCustomers()
         .getFirst();
 
     given(customerService.getCustomerById(testCustomer.getId())).willReturn(testCustomer);

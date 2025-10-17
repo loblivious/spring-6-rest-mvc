@@ -1,20 +1,20 @@
 package com.loblivious.spring6restmvc.services;
 
-import com.loblivious.spring6restmvc.model.Beer;
+import com.loblivious.spring6restmvc.model.BeerDTO;
 import java.util.List;
 import java.util.UUID;
 
 public interface BeerService {
 
-  List<Beer> listBeers();
+  List<BeerDTO> listBeers();
 
-  Beer getBeerById(UUID id);
+  BeerDTO getBeerById(UUID id);
 
-  Beer saveNewBeer(Beer beer);
+  BeerDTO saveNewBeer(BeerDTO beer);
 
-  void updateBeerById(UUID beerId, Beer beer);
+  void updateBeerById(UUID beerId, BeerDTO beer);
 
   void deleteBeerById(UUID beerId);
 
-  void patchBeerById(UUID beerId, Beer beer);
+  void patchBeerById(UUID beerId, BeerDTO beer);
 }

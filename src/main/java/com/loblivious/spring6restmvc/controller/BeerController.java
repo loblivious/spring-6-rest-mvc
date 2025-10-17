@@ -1,6 +1,6 @@
 package com.loblivious.spring6restmvc.controller;
 
-import com.loblivious.spring6restmvc.model.Beer;
+import com.loblivious.spring6restmvc.model.BeerDTO;
 import com.loblivious.spring6restmvc.services.BeerService;
 import java.net.URI;
 import java.util.List;
@@ -29,7 +29,7 @@ public class BeerController {
 
   @PatchMapping(BEER_PATH_ID)
   public ResponseEntity<Void> patchBeerById(@PathVariable("beerId") UUID beerId,
-      @RequestBody Beer beer) {
+      @RequestBody BeerDTO beer) {
     log.info("Patching beer with id {}", beerId);
 
     beerService.patchBeerById(beerId, beer);
@@ -48,7 +48,7 @@ public class BeerController {
 
   @PutMapping(BEER_PATH_ID)
   public ResponseEntity<Void> updateBeerById(@PathVariable("beerId") UUID beerId,
-      @RequestBody Beer beer) {
+      @RequestBody BeerDTO beer) {
     log.info("Received Beer put request: beerId={}, beer={}", beerId, beer);
 
     beerService.updateBeerById(beerId, beer);
@@ -57,21 +57,21 @@ public class BeerController {
   }
 
   @PostMapping(BEER_PATH)
-  public ResponseEntity<Void> createBeer(@RequestBody Beer beer) {
+  public ResponseEntity<Void> createBeer(@RequestBody BeerDTO beer) {
     log.info("Received Beer post request: {}", beer);
 
-    Beer savedBeer = beerService.saveNewBeer(beer);
+    BeerDTO savedBeer = beerService.saveNewBeer(beer);
 
     return ResponseEntity.created(URI.create(BEER_PATH + savedBeer.getId())).build();
   }
 
   @GetMapping(BEER_PATH)
-  public List<Beer> listBeers() {
+  public List<BeerDTO> listBeers() {
     return beerService.listBeers();
   }
 
   @GetMapping(BEER_PATH_ID)
-  public Beer getBeerById(@PathVariable("beerId") UUID beerId) {
+  public BeerDTO getBeerById(@PathVariable("beerId") UUID beerId) {
     log.info("Get Beer by Id - in controller");
 
     return beerService.getBeerById(beerId);
