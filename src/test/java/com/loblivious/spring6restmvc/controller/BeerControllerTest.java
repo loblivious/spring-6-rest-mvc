@@ -18,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.loblivious.spring6restmvc.exception.NotFoundException;
 import com.loblivious.spring6restmvc.model.Beer;
 import com.loblivious.spring6restmvc.services.BeerService;
 import com.loblivious.spring6restmvc.services.BeerServiceImpl;
@@ -58,6 +59,16 @@ class BeerControllerTest {
   @BeforeEach
   void setUp() {
     beerServiceImpl = new BeerServiceImpl();
+  }
+
+  @Test
+  @SneakyThrows
+  void testGetBeerByIdNotFound() {
+
+    given(beerService.getBeerById(any(UUID.class))).willThrow(NotFoundException.class);
+
+    mockMvc.perform(get(BEER_PATH_ID, UUID.randomUUID()))
+        .andExpect(status().isNotFound());
   }
 
   @Test

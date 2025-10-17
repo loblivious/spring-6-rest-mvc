@@ -1,11 +1,13 @@
 package com.loblivious.spring6restmvc.services;
 
+import com.loblivious.spring6restmvc.exception.NotFoundException;
 import com.loblivious.spring6restmvc.model.Customer;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -51,7 +53,7 @@ public class CustomerServiceImpl implements CustomerService {
   @Override
   public Customer getCustomerById(UUID id) {
     log.debug("Get Customer by Id - in service. Id: {}", id.toString());
-    return customerMap.get(id);
+    return Optional.ofNullable(customerMap.get(id)).orElseThrow(NotFoundException::new);
   }
 
   @Override

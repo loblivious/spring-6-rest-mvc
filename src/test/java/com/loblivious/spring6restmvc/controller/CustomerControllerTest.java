@@ -18,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.loblivious.spring6restmvc.exception.NotFoundException;
 import com.loblivious.spring6restmvc.model.Customer;
 import com.loblivious.spring6restmvc.services.CustomerService;
 import com.loblivious.spring6restmvc.services.CustomerServiceImpl;
@@ -58,6 +59,15 @@ class CustomerControllerTest {
   @BeforeEach
   void setUp() {
     customerServiceImpl = new CustomerServiceImpl();
+  }
+
+  @Test
+  @SneakyThrows
+  void testGetCustomerByIdNotFound() {
+    given(customerService.getCustomerById(any(UUID.class))).willThrow(NotFoundException.class);
+
+    mockMvc.perform(get(CUSTOMER_PATH_ID, UUID.randomUUID()))
+        .andExpect(status().isNotFound());
   }
 
   @Test
