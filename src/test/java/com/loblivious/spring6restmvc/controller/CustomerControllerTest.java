@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loblivious.spring6restmvc.exception.NotFoundException;
 import com.loblivious.spring6restmvc.model.CustomerDTO;
 import com.loblivious.spring6restmvc.services.CustomerService;
-import com.loblivious.spring6restmvc.services.CustomerServiceImpl;
+import com.loblivious.spring6restmvc.services.CustomerServiceWithoutDbImpl;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -48,7 +48,7 @@ class CustomerControllerTest {
   @MockitoBean
   private CustomerService customerService;
 
-  CustomerServiceImpl customerServiceImpl;
+  CustomerServiceWithoutDbImpl customerServiceWithoutDbImpl;
 
   @Captor
   ArgumentCaptor<CustomerDTO> customerArgumentCaptor;
@@ -58,7 +58,7 @@ class CustomerControllerTest {
 
   @BeforeEach
   void setUp() {
-    customerServiceImpl = new CustomerServiceImpl();
+    customerServiceWithoutDbImpl = new CustomerServiceWithoutDbImpl();
   }
 
   @Test
@@ -73,7 +73,7 @@ class CustomerControllerTest {
   @Test
   @SneakyThrows
   void testPatchCustomer() {
-    CustomerDTO customer = customerServiceImpl.getAllCustomers().getFirst();
+    CustomerDTO customer = customerServiceWithoutDbImpl.getAllCustomers().getFirst();
 
     Map<String, Object> customerMap = new HashMap<>();
     customerMap.put("name", "John Doe");
@@ -94,7 +94,7 @@ class CustomerControllerTest {
   @Test
   @SneakyThrows
   void testDeleteCustomerById() {
-    CustomerDTO customer = customerServiceImpl.getAllCustomers().getFirst();
+    CustomerDTO customer = customerServiceWithoutDbImpl.getAllCustomers().getFirst();
 
     mockMvc.perform(delete(CUSTOMER_PATH_ID, customer.getId())
             .accept(MediaType.APPLICATION_JSON))
@@ -109,7 +109,7 @@ class CustomerControllerTest {
   @Test
   @SneakyThrows
   void testUpdateCustomer() {
-    CustomerDTO customer = customerServiceImpl.getAllCustomers().getFirst();
+    CustomerDTO customer = customerServiceWithoutDbImpl.getAllCustomers().getFirst();
 
     mockMvc.perform(put(CUSTOMER_PATH_ID, customer.getId())
             .accept(MediaType.APPLICATION_JSON)
@@ -126,7 +126,7 @@ class CustomerControllerTest {
     CustomerDTO newCustomer = CustomerDTO.builder().name("New Customer").build();
 
     given(customerService.saveNewCustomer(any(CustomerDTO.class))).willReturn(
-        customerServiceImpl.getAllCustomers().get(1));
+        customerServiceWithoutDbImpl.getAllCustomers().get(1));
 
     mockMvc.perform(post(CUSTOMER_PATH).accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
@@ -138,7 +138,7 @@ class CustomerControllerTest {
   @Test
   @SneakyThrows
   void testGetAllCustomers() {
-    given(customerService.getAllCustomers()).willReturn(customerServiceImpl.getAllCustomers());
+    given(customerService.getAllCustomers()).willReturn(customerServiceWithoutDbImpl.getAllCustomers());
 
     mockMvc.perform(get(CUSTOMER_PATH)
             .contentType(MediaType.APPLICATION_JSON))
@@ -150,7 +150,7 @@ class CustomerControllerTest {
   @Test
   @SneakyThrows
   void testGetCustomerById() {
-    CustomerDTO testCustomer = customerServiceImpl.getAllCustomers()
+    CustomerDTO testCustomer = customerServiceWithoutDbImpl.getAllCustomers()
         .getFirst();
 
     given(customerService.getCustomerById(testCustomer.getId())).willReturn(testCustomer);
