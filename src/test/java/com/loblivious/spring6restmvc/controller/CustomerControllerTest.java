@@ -63,6 +63,35 @@ class CustomerControllerTest {
 
   @Test
   @SneakyThrows
+  void testUpdateCustomerBlankName() {
+    CustomerDTO customerDto = customerServiceWithoutDbImpl.getAllCustomers().getFirst();
+    customerDto.setName("");
+
+    mockMvc.perform(put(CUSTOMER_PATH_ID, customerDto.getId())
+        .accept(MediaType.APPLICATION_JSON)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(customerDto)))
+        .andExpect(status().isBadRequest())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.length()", is(1)));
+  }
+
+  @Test
+  @SneakyThrows
+  void testCreateEmptyCustomer() {
+    CustomerDTO customerDto = CustomerDTO.builder().build();
+
+    mockMvc.perform(post(CUSTOMER_PATH)
+        .accept(MediaType.APPLICATION_JSON)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(customerDto)))
+        .andExpect(status().isBadRequest())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.length()", is(2)));
+  }
+
+  @Test
+  @SneakyThrows
   void testGetCustomerByIdNotFound() {
     given(customerService.getCustomerById(any(UUID.class))).willThrow(NotFoundException.class);
 

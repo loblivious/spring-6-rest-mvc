@@ -8,6 +8,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -48,7 +49,7 @@ public class CustomerController {
 
   @PutMapping(value = CUSTOMER_PATH_ID)
   public ResponseEntity<Void> updateCustomerById(@PathVariable("customerId") UUID customerId,
-      @RequestBody CustomerDTO customer) {
+      @Validated @RequestBody CustomerDTO customer) {
     log.info("Received Customer put request: customerId={}, customer={}", customerId, customer);
 
     customerService.updateCustomerById(customerId, customer);
@@ -57,7 +58,7 @@ public class CustomerController {
   }
 
   @PostMapping(CUSTOMER_PATH)
-  public ResponseEntity<Void> createCustomer(@RequestBody CustomerDTO customer) {
+  public ResponseEntity<Void> createCustomer(@Validated @RequestBody CustomerDTO customer) {
     log.info("Received Customer post request: {}", customer);
 
     CustomerDTO savedCustomer = customerService.saveNewCustomer(customer);

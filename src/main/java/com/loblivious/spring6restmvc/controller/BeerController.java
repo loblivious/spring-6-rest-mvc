@@ -8,6 +8,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -48,7 +49,7 @@ public class BeerController {
 
   @PutMapping(BEER_PATH_ID)
   public ResponseEntity<Void> updateBeerById(@PathVariable("beerId") UUID beerId,
-      @RequestBody BeerDTO beer) {
+      @Validated @RequestBody BeerDTO beer) {
     log.info("Received Beer put request: beerId={}, beer={}", beerId, beer);
 
     beerService.updateBeerById(beerId, beer);
@@ -57,7 +58,7 @@ public class BeerController {
   }
 
   @PostMapping(BEER_PATH)
-  public ResponseEntity<Void> createBeer(@RequestBody BeerDTO beer) {
+  public ResponseEntity<Void> createBeer(@Validated @RequestBody BeerDTO beer) {
     log.info("Received Beer post request: {}", beer);
 
     BeerDTO savedBeer = beerService.saveNewBeer(beer);
