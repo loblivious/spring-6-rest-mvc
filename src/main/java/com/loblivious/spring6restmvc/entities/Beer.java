@@ -7,6 +7,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -28,12 +31,28 @@ public class Beer {
   @GeneratedValue(strategy = GenerationType.UUID)
   @Column(length = 36, columnDefinition = "varchar", updatable = false, nullable = false)
   private UUID id;
+
   @Version
   private Integer version;
+
+  @NotNull
+  @NotBlank
+  // this does the validation when it hits the db and throws DataIntegrityViolationException
+  @Column(length = 50)
+  // adding this runs the validation before it hits the db and throws ConstraintViolationException
+  @Size(max = 50)
   private String beerName;
+
+  @NotNull
   private BeerStyle beerStyle;
+
+  @NotNull
+  @NotBlank
+  @Size(max = 255)
   private String upc;
   private Integer quantityOnHand;
+
+  @NotNull
   private BigDecimal price;
   private LocalDateTime createdDate;
   private LocalDateTime updateDate;

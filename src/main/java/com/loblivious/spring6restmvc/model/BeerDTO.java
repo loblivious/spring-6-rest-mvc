@@ -2,6 +2,7 @@ package com.loblivious.spring6restmvc.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -19,6 +20,7 @@ public class BeerDTO {
   // that lets us know the input is null
   @NotBlank
   @NotNull
+  @Size(max = 50)
   private String beerName;
 
   @NotNull
@@ -26,6 +28,7 @@ public class BeerDTO {
 
   @NotNull
   @NotBlank
+  @Size(max = 255)
   private String upc;
   private Integer quantityOnHand;
 

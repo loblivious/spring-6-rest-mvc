@@ -17,6 +17,8 @@ class CustomerRepositoryTest {
   void saveCustomer() {
     Customer savedCustomer = customerRepository.save(Customer.builder().name("New Name").build());
 
+    customerRepository.flush();
+
     assertThat(savedCustomer).isNotNull();
     assertThat(savedCustomer.getId()).isNotNull();
   }
