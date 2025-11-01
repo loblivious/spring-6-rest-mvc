@@ -62,7 +62,7 @@ public class BeerController {
 
     BeerDTO savedBeer = beerService.saveNewBeer(beer);
 
-    return ResponseEntity.created(URI.create(BEER_PATH + savedBeer.getId())).build();
+    return ResponseEntity.created(URI.create(BEER_PATH + "/" + savedBeer.getId())).build();
   }
 
   @GetMapping(BEER_PATH)

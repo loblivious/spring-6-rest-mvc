@@ -103,6 +103,7 @@ public class BeerServiceWithoutDbImpl implements BeerService {
     existingBeer.setPrice(beer.getPrice());
     existingBeer.setUpc(beer.getUpc());
     existingBeer.setQuantityOnHand(beer.getQuantityOnHand());
+
   }
 
   @Override

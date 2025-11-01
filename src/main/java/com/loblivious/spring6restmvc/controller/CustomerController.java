@@ -62,7 +62,7 @@ public class CustomerController {
 
     CustomerDTO savedCustomer = customerService.saveNewCustomer(customer);
 
-    return ResponseEntity.created(URI.create(CUSTOMER_PATH + savedCustomer.getId())).build();
+    return ResponseEntity.created(URI.create(CUSTOMER_PATH + "/" + savedCustomer.getId())).build();
   }
 
   @GetMapping(CUSTOMER_PATH)
