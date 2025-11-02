@@ -1,0 +1,11 @@
+services:
+  mysql:
+    image: 'mysql:latest'
+    restart: always
+    environment:
+      - 'MYSQL_DATABASE=restdb'
+      - 'MYSQL_PASSWORD=password'
+      - 'MYSQL_ROOT_PASSWORD=verysecret'
+      - 'MYSQL_USER=restadmin'
+    ports:
+      - '3306:3306'
