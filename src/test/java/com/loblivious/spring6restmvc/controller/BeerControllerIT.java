@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest
-class BeerControllerIntegrationTest {
+class BeerControllerIT {
 
   @Autowired
   private BeerController beerController;

@@ -19,7 +19,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-class CustomerControllerIntegrationTest {
+class CustomerControllerIT {
 
   @Autowired
   private CustomerController customerController;
