@@ -31,6 +31,4 @@ public class MySqlIT {
 
     assertThat(beers.size()).isGreaterThan(0);
   }
-
-
 }
