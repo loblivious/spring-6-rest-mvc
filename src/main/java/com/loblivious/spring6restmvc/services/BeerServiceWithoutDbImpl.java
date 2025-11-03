@@ -2,6 +2,7 @@ package com.loblivious.spring6restmvc.services;
 
 import com.loblivious.spring6restmvc.exception.NotFoundException;
 import com.loblivious.spring6restmvc.model.BeerDTO;
+import com.loblivious.spring6restmvc.model.BeerFilterDTO;
 import com.loblivious.spring6restmvc.model.BeerStyle;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -66,7 +67,7 @@ public class BeerServiceWithoutDbImpl implements BeerService {
   }
 
   @Override
-  public List<BeerDTO> listBeers() {
+  public List<BeerDTO> listBeers(BeerFilterDTO beerFilterDTO) {
     return new ArrayList<>(beerMap.values());
   }
 

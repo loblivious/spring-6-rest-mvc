@@ -1,9 +1,11 @@
 package com.loblivious.spring6restmvc.controller;
 
+import static com.loblivious.spring6restmvc.controller.BeerController.BEER_PATH;
 import static com.loblivious.spring6restmvc.controller.BeerController.BEER_PATH_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -13,6 +15,7 @@ import com.loblivious.spring6restmvc.entities.Beer;
 import com.loblivious.spring6restmvc.exception.NotFoundException;
 import com.loblivious.spring6restmvc.mappers.BeerMapper;
 import com.loblivious.spring6restmvc.model.BeerDTO;
+import com.loblivious.spring6restmvc.model.BeerStyle;
 import com.loblivious.spring6restmvc.repositories.BeerRepository;
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +62,24 @@ class BeerControllerIT {
 
   @Test
   @SneakyThrows
+  void testListBeersByStyle() {
+    mockMvc.perform(get(BEER_PATH)
+            .queryParam("beerStyle", BeerStyle.IPA.name()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()", is(548)));
+  }
+
+  @Test
+  @SneakyThrows
+  void testListBeersByName() {
+    mockMvc.perform(get(BEER_PATH)
+        .queryParam("beerName", "IPA"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()", is(336)));
+  }
+
+  @Test
+  @SneakyThrows
   void testPatchBeerBadName() {
     Beer beer = beerRepository.findAll().getFirst();
 
@@ -76,7 +97,7 @@ class BeerControllerIT {
 
   @Test
   void testListBeers() {
-    List<BeerDTO> dtos = beerController.listBeers();
+    List<BeerDTO> dtos = beerController.listBeers(null, null);
 
     assertThat(dtos.size()).isEqualTo(2413);
   }
@@ -88,7 +109,7 @@ class BeerControllerIT {
   @Rollback
   void testEmptyList() {
     beerRepository.deleteAll();
-    List<BeerDTO> dtos = beerController.listBeers();
+    List<BeerDTO> dtos = beerController.listBeers(null, null);
 
     assertThat(dtos.size()).isEqualTo(0);
   }

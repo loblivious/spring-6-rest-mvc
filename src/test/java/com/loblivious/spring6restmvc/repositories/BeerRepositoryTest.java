@@ -3,19 +3,34 @@ package com.loblivious.spring6restmvc.repositories;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.loblivious.spring6restmvc.bootstrap.BootstrapData;
 import com.loblivious.spring6restmvc.entities.Beer;
+import com.loblivious.spring6restmvc.model.BeerFilterDTO;
 import com.loblivious.spring6restmvc.model.BeerStyle;
+import com.loblivious.spring6restmvc.services.BeerCsvServiceImpl;
+import com.loblivious.spring6restmvc.services.BeerPredicateBuilder;
 import jakarta.validation.ConstraintViolationException;
 import java.math.BigDecimal;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 @DataJpaTest
+@Import({BootstrapData.class, BeerCsvServiceImpl.class})
 class BeerRepositoryTest {
 
   @Autowired
   private BeerRepository beerRepository;
+
+  @Test
+  void testGetBeerListByName() {
+    List<Beer> beerList = (List<Beer>) beerRepository.findAll(
+        BeerPredicateBuilder.build(BeerFilterDTO.builder().beerName("IPA").build()));
+
+    assertThat(beerList.size()).isEqualTo(336);
+  }
 
   @Test
   void testSaveBeerNameTooLong() {

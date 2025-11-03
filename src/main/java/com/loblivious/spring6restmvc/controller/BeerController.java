@@ -1,6 +1,8 @@
 package com.loblivious.spring6restmvc.controller;
 
 import com.loblivious.spring6restmvc.model.BeerDTO;
+import com.loblivious.spring6restmvc.model.BeerFilterDTO;
+import com.loblivious.spring6restmvc.model.BeerStyle;
 import com.loblivious.spring6restmvc.services.BeerService;
 import java.net.URI;
 import java.util.List;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -67,8 +70,15 @@ public class BeerController {
   }
 
   @GetMapping(BEER_PATH)
-  public List<BeerDTO> listBeers() {
-    return beerService.listBeers();
+  public List<BeerDTO> listBeers(@RequestParam(required = false) String beerName,
+      @RequestParam(required = false) BeerStyle beerStyle) {
+
+    BeerFilterDTO beerFilterDto = BeerFilterDTO.builder()
+        .beerName(beerName)
+        .beerStyle(beerStyle)
+        .build();
+
+    return beerService.listBeers(beerFilterDto);
   }
 
   @GetMapping(BEER_PATH_ID)

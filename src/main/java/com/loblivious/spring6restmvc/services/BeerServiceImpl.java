@@ -4,10 +4,12 @@ import com.loblivious.spring6restmvc.entities.Beer;
 import com.loblivious.spring6restmvc.exception.NotFoundException;
 import com.loblivious.spring6restmvc.mappers.BeerMapper;
 import com.loblivious.spring6restmvc.model.BeerDTO;
+import com.loblivious.spring6restmvc.model.BeerFilterDTO;
 import com.loblivious.spring6restmvc.repositories.BeerRepository;
+import com.querydsl.core.types.Predicate;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -22,9 +24,14 @@ public class BeerServiceImpl implements BeerService {
   private final BeerMapper beerMapper;
 
   @Override
-  public List<BeerDTO> listBeers() {
-    return beerRepository.findAll().stream().map(beerMapper::beerToBeerDto)
-        .collect(Collectors.toList());
+  public List<BeerDTO> listBeers(BeerFilterDTO beerFilter) {
+    Predicate predicate = BeerPredicateBuilder.build(beerFilter);
+
+    Iterable<Beer> beers = beerRepository.findAll(predicate);
+
+    return StreamSupport.stream(beers.spliterator(), false)
+        .map(beerMapper::beerToBeerDto)
+        .toList();
   }
 
   @Override
@@ -66,19 +73,19 @@ public class BeerServiceImpl implements BeerService {
     Beer foundBeer = beerRepository.findById(beerId)
         .orElseThrow(NotFoundException::new);
 
-    if (StringUtils.hasText(beer.getBeerName())){
+    if (StringUtils.hasText(beer.getBeerName())) {
       foundBeer.setBeerName(beer.getBeerName());
     }
-    if (beer.getBeerStyle() != null){
+    if (beer.getBeerStyle() != null) {
       foundBeer.setBeerStyle(beer.getBeerStyle());
     }
-    if (StringUtils.hasText(beer.getUpc())){
+    if (StringUtils.hasText(beer.getUpc())) {
       foundBeer.setUpc(beer.getUpc());
     }
-    if (beer.getPrice() != null){
+    if (beer.getPrice() != null) {
       foundBeer.setPrice(beer.getPrice());
     }
-    if (beer.getQuantityOnHand() != null){
+    if (beer.getQuantityOnHand() != null) {
       foundBeer.setQuantityOnHand(beer.getQuantityOnHand());
     }
 

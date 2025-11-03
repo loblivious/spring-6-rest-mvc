@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loblivious.spring6restmvc.exception.NotFoundException;
 import com.loblivious.spring6restmvc.model.BeerDTO;
+import com.loblivious.spring6restmvc.model.BeerFilterDTO;
 import com.loblivious.spring6restmvc.services.BeerService;
 import com.loblivious.spring6restmvc.services.BeerServiceWithoutDbImpl;
 import java.util.HashMap;
@@ -64,7 +65,7 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testUpdateBeerBlankName() {
-    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers().getFirst();
+    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null).getFirst();
     beerDto.setBeerName("");
 
     mockMvc.perform(put(BEER_PATH_ID, beerDto.getId())
@@ -82,9 +83,9 @@ class BeerControllerTest {
     BeerDTO beerDto = BeerDTO.builder().build();
 
     mockMvc.perform(post(BEER_PATH)
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(beerDto)))
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(beerDto)))
         .andExpect(status().isBadRequest())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.length()", is(6)));
@@ -103,7 +104,7 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testPatchBeer() {
-    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers().getFirst();
+    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null).getFirst();
 
     Map<String, Object> beerMap = new HashMap<>();
     beerMap.put("beerName", "New Name");
@@ -123,7 +124,7 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testDeleteBeerById() {
-    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers().getFirst();
+    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null).getFirst();
 
     mockMvc.perform(delete(BEER_PATH_ID, beerDto.getId())
             .accept(MediaType.APPLICATION_JSON))
@@ -137,7 +138,7 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testUpdateBeer() {
-    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers().getFirst();
+    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null).getFirst();
 
     mockMvc.perform(put(BEER_PATH_ID, beerDto.getId())
             .accept(MediaType.APPLICATION_JSON)
@@ -151,12 +152,12 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testCreateNewBeer() {
-    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers().getFirst();
+    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null).getFirst();
     beerDto.setVersion(null);
     beerDto.setId(null);
 
     given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(
-        beerServiceWithoutDbImpl.listBeers().get(1));
+        beerServiceWithoutDbImpl.listBeers(null).get(1));
 
     mockMvc.perform(post(BEER_PATH)
             .accept(MediaType.APPLICATION_JSON)
@@ -169,7 +170,8 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testListBeers() {
-    given(beerService.listBeers()).willReturn(beerServiceWithoutDbImpl.listBeers());
+    given(beerService.listBeers(any(BeerFilterDTO.class)))
+        .willReturn(beerServiceWithoutDbImpl.listBeers(null));
 
     mockMvc.perform(get(BEER_PATH)
             .accept(MediaType.APPLICATION_JSON))
@@ -181,7 +183,7 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testGetBeerById() {
-    BeerDTO testBeerDto = beerServiceWithoutDbImpl.listBeers()
+    BeerDTO testBeerDto = beerServiceWithoutDbImpl.listBeers(null)
         .getFirst();
 
     given(beerService.getBeerById(testBeerDto.getId())).willReturn(testBeerDto);
