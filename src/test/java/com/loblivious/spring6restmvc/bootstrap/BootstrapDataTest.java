@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.loblivious.spring6restmvc.repositories.BeerRepository;
 import com.loblivious.spring6restmvc.repositories.CustomerRepository;
+import com.loblivious.spring6restmvc.services.BeerCsvService;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +20,18 @@ class BootstrapDataTest {
   @Autowired
   CustomerRepository customerRepository;
 
+  @Autowired
+  BeerCsvService beerCsvService;
+
   BootstrapData bootstrapData;
 
   @BeforeEach
   void setUp() {
-    bootstrapData = new BootstrapData(beerRepository, customerRepository);
+    bootstrapData = new BootstrapData(beerRepository, customerRepository, beerCsvService);
   }
 
   @Test
+  @SneakyThrows
   void testRun() {
     bootstrapData.run();
 
