@@ -2,12 +2,13 @@ package com.loblivious.spring6restmvc.services;
 
 import com.loblivious.spring6restmvc.model.BeerDTO;
 import com.loblivious.spring6restmvc.model.BeerFilterDTO;
-import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface BeerService {
 
-  List<BeerDTO> listBeers(BeerFilterDTO beerFilterDTO);
+  Page<BeerDTO> listBeers(BeerFilterDTO beerFilterDTO, Pageable pageable);
 
   BeerDTO getBeerById(UUID id);
 

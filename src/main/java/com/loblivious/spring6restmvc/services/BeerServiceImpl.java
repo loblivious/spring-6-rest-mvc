@@ -6,12 +6,11 @@ import com.loblivious.spring6restmvc.mappers.BeerMapper;
 import com.loblivious.spring6restmvc.model.BeerDTO;
 import com.loblivious.spring6restmvc.model.BeerFilterDTO;
 import com.loblivious.spring6restmvc.repositories.BeerRepository;
-import com.querydsl.core.types.Predicate;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.StreamSupport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -24,19 +23,18 @@ public class BeerServiceImpl implements BeerService {
   private final BeerMapper beerMapper;
 
   @Override
-  public List<BeerDTO> listBeers(BeerFilterDTO beerFilter) {
-    Predicate predicate = BeerPredicateBuilder.build(beerFilter);
+  public Page<BeerDTO> listBeers(BeerFilterDTO beerFilter, Pageable pageable) {
+    Page<Beer> beersPage = beerRepository.findAll(BeerPredicateBuilder.build(beerFilter), pageable);
 
-    Iterable<Beer> beers = beerRepository.findAll(predicate);
+    return beersPage.map(beer -> {
+      BeerDTO beerDto = beerMapper.beerToBeerDto(beer);
 
-    return StreamSupport.stream(beers.spliterator(), false)
-        .map((beer) -> {
-          BeerDTO beerDto = beerMapper.beerToBeerDto(beer);
-          if (beerFilter.showInventory() != null && !beerFilter.showInventory()) {
-            beerDto.setQuantityOnHand(null);
-          }
-          return beerDto;
-        }).toList();
+      if (beerFilter.showInventory() != null && !beerFilter.showInventory()) {
+        beerDto.setQuantityOnHand(null);
+      }
+
+      return beerDto;
+    });
   }
 
   @Override

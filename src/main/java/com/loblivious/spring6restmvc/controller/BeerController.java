@@ -5,10 +5,12 @@ import com.loblivious.spring6restmvc.model.BeerFilterDTO;
 import com.loblivious.spring6restmvc.model.BeerStyle;
 import com.loblivious.spring6restmvc.services.BeerService;
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,6 +30,9 @@ public class BeerController {
 
   public static final String BEER_PATH = "/api/v1/beer";
   public static final String BEER_PATH_ID = BEER_PATH + "/{beerId}";
+
+  private static final String DEFAULT_SORTING_BY = "beerName";
+  private static final int DEFAULT_PAGE_SIZE = 25;
 
   private final BeerService beerService;
 
@@ -70,9 +75,10 @@ public class BeerController {
   }
 
   @GetMapping(BEER_PATH)
-  public List<BeerDTO> listBeers(@RequestParam(required = false) String beerName,
+  public Page<BeerDTO> listBeers(@RequestParam(required = false) String beerName,
       @RequestParam(required = false) BeerStyle beerStyle,
-      @RequestParam(required = false) Boolean showInventory) {
+      @RequestParam(required = false) Boolean showInventory,
+      @PageableDefault(size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORTING_BY) Pageable pageable) {
 
     BeerFilterDTO beerFilterDto = BeerFilterDTO.builder()
         .beerName(beerName)
@@ -80,7 +86,7 @@ public class BeerController {
         .showInventory(showInventory)
         .build();
 
-    return beerService.listBeers(beerFilterDto);
+    return beerService.listBeers(beerFilterDto, pageable);
   }
 
   @GetMapping(BEER_PATH_ID)

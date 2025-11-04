@@ -20,7 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loblivious.spring6restmvc.exception.NotFoundException;
 import com.loblivious.spring6restmvc.model.BeerDTO;
-import com.loblivious.spring6restmvc.model.BeerFilterDTO;
 import com.loblivious.spring6restmvc.services.BeerService;
 import com.loblivious.spring6restmvc.services.BeerServiceWithoutDbImpl;
 import java.util.HashMap;
@@ -33,6 +32,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -65,7 +65,8 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testUpdateBeerBlankName() {
-    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null).getFirst();
+    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).toList()
+        .getFirst();
     beerDto.setBeerName("");
 
     mockMvc.perform(put(BEER_PATH_ID, beerDto.getId())
@@ -104,7 +105,8 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testPatchBeer() {
-    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null).getFirst();
+    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).toList()
+        .getFirst();
 
     Map<String, Object> beerMap = new HashMap<>();
     beerMap.put("beerName", "New Name");
@@ -124,7 +126,8 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testDeleteBeerById() {
-    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null).getFirst();
+    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).toList()
+        .getFirst();
 
     mockMvc.perform(delete(BEER_PATH_ID, beerDto.getId())
             .accept(MediaType.APPLICATION_JSON))
@@ -138,7 +141,8 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testUpdateBeer() {
-    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null).getFirst();
+    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).toList()
+        .getFirst();
 
     mockMvc.perform(put(BEER_PATH_ID, beerDto.getId())
             .accept(MediaType.APPLICATION_JSON)
@@ -152,12 +156,13 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testCreateNewBeer() {
-    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null).getFirst();
+    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).toList()
+        .getFirst();
     beerDto.setVersion(null);
     beerDto.setId(null);
 
     given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(
-        beerServiceWithoutDbImpl.listBeers(null).get(1));
+        beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).toList().get(1));
 
     mockMvc.perform(post(BEER_PATH)
             .accept(MediaType.APPLICATION_JSON)
@@ -170,20 +175,20 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testListBeers() {
-    given(beerService.listBeers(any(BeerFilterDTO.class)))
-        .willReturn(beerServiceWithoutDbImpl.listBeers(null));
+    given(beerService.listBeers(any(), any()))
+        .willReturn(beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()));
 
     mockMvc.perform(get(BEER_PATH)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.length()", is(3)));
+        .andExpect(jsonPath("$.content.length()", is(3)));
   }
 
   @Test
   @SneakyThrows
   void testGetBeerById() {
-    BeerDTO testBeerDto = beerServiceWithoutDbImpl.listBeers(null)
+    BeerDTO testBeerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).toList()
         .getFirst();
 
     given(beerService.getBeerById(testBeerDto.getId())).willReturn(testBeerDto);
