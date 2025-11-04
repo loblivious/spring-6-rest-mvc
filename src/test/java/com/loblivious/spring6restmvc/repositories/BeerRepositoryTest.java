@@ -11,11 +11,12 @@ import com.loblivious.spring6restmvc.services.BeerCsvServiceImpl;
 import com.loblivious.spring6restmvc.services.BeerPredicateBuilder;
 import jakarta.validation.ConstraintViolationException;
 import java.math.BigDecimal;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @DataJpaTest
 @Import({BootstrapData.class, BeerCsvServiceImpl.class})
@@ -26,10 +27,11 @@ class BeerRepositoryTest {
 
   @Test
   void testGetBeerListByName() {
-    List<Beer> beerList = (List<Beer>) beerRepository.findAll(
-        BeerPredicateBuilder.build(BeerFilterDTO.builder().beerName("IPA").build()));
+    Page<Beer> beerList = beerRepository.findAll(
+        BeerPredicateBuilder.build(BeerFilterDTO.builder().beerName("IPA").build()),
+        Pageable.unpaged());
 
-    assertThat(beerList.size()).isEqualTo(336);
+    assertThat(beerList.getContent().size()).isEqualTo(336);
   }
 
   @Test

@@ -31,7 +31,7 @@ public class BeerController {
   public static final String BEER_PATH = "/api/v1/beer";
   public static final String BEER_PATH_ID = BEER_PATH + "/{beerId}";
 
-  private static final String DEFAULT_SORTING_COLUMN_AND_DIRECTION = "beerName, asc";
+  private static final String DEFAULT_SORTING_BY = "beerName";
   private static final int DEFAULT_PAGE_SIZE = 25;
 
   private final BeerService beerService;
@@ -78,7 +78,7 @@ public class BeerController {
   public Page<BeerDTO> listBeers(@RequestParam(required = false) String beerName,
       @RequestParam(required = false) BeerStyle beerStyle,
       @RequestParam(required = false) Boolean showInventory,
-      @PageableDefault(size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORTING_COLUMN_AND_DIRECTION) Pageable pageable) {
+      @PageableDefault(size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORTING_BY) Pageable pageable) {
 
     BeerFilterDTO beerFilterDto = BeerFilterDTO.builder()
         .beerName(beerName)

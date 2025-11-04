@@ -65,7 +65,7 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testUpdateBeerBlankName() {
-    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).toList()
+    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).getContent()
         .getFirst();
     beerDto.setBeerName("");
 
@@ -105,7 +105,7 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testPatchBeer() {
-    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).toList()
+    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).getContent()
         .getFirst();
 
     Map<String, Object> beerMap = new HashMap<>();
@@ -126,7 +126,7 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testDeleteBeerById() {
-    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).toList()
+    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).getContent()
         .getFirst();
 
     mockMvc.perform(delete(BEER_PATH_ID, beerDto.getId())
@@ -141,7 +141,7 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testUpdateBeer() {
-    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).toList()
+    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).getContent()
         .getFirst();
 
     mockMvc.perform(put(BEER_PATH_ID, beerDto.getId())
@@ -156,13 +156,13 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testCreateNewBeer() {
-    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).toList()
+    BeerDTO beerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).getContent()
         .getFirst();
     beerDto.setVersion(null);
     beerDto.setId(null);
 
     given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(
-        beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).toList().get(1));
+        beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).getContent().get(1));
 
     mockMvc.perform(post(BEER_PATH)
             .accept(MediaType.APPLICATION_JSON)
@@ -188,7 +188,7 @@ class BeerControllerTest {
   @Test
   @SneakyThrows
   void testGetBeerById() {
-    BeerDTO testBeerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).toList()
+    BeerDTO testBeerDto = beerServiceWithoutDbImpl.listBeers(null, Pageable.unpaged()).getContent()
         .getFirst();
 
     given(beerService.getBeerById(testBeerDto.getId())).willReturn(testBeerDto);
