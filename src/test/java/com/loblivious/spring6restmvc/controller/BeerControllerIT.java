@@ -64,6 +64,20 @@ class BeerControllerIT {
 
   @Test
   @SneakyThrows
+  void tesListBeersByStyleAndNameShowInventoryTruePage2() {
+    mockMvc.perform(get(BeerController.BEER_PATH)
+            .queryParam("beerName", "IPA")
+            .queryParam("beerStyle", BeerStyle.IPA.name())
+            .queryParam("showInventory", "true")
+            .queryParam("page", "2")
+            .queryParam("size", "50"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content.size()", is(50)))
+        .andExpect(jsonPath("$.content[0].quantityOnHand").value(IsNull.notNullValue()));
+  }
+
+  @Test
+  @SneakyThrows
   void testListBeerByStyleAndNameShowInventoryFalse() {
     mockMvc.perform(get(BEER_PATH)
             .queryParam("beerName", BeerStyle.IPA.name())
@@ -140,7 +154,7 @@ class BeerControllerIT {
   void testListBeers() {
     Page<BeerDTO> dtos = beerController.listBeers(null, null, null, Pageable.unpaged());
 
-    assertThat(dtos.stream().count()).isEqualTo(2413);
+    assertThat(dtos.getContent().size()).isEqualTo(2413);
   }
 
   @Test
