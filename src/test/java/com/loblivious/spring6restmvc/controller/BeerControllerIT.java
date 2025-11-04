@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import lombok.SneakyThrows;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,42 @@ class BeerControllerIT {
 
   @Test
   @SneakyThrows
+  void testListBeerByStyleAndNameShowInventoryFalse() {
+    mockMvc.perform(get(BEER_PATH)
+            .queryParam("beerName", BeerStyle.IPA.name())
+            .queryParam("beerStyle", BeerStyle.IPA.name())
+            .queryParam("showInventory", Boolean.toString(false)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()", is(310)))
+        .andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.nullValue()));
+
+  }
+
+  @Test
+  @SneakyThrows
+  void testListBeerByStyleAndNameShowInventory() {
+    mockMvc.perform(get(BEER_PATH)
+            .queryParam("beerName", BeerStyle.IPA.name())
+            .queryParam("beerStyle", BeerStyle.IPA.name())
+            .queryParam("showInventory", Boolean.toString(true)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()", is(310)))
+        .andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.notNullValue()));
+
+  }
+
+  @Test
+  @SneakyThrows
+  void testListBeerByStyleAndName() {
+    mockMvc.perform(get(BEER_PATH)
+            .queryParam("beerName", BeerStyle.IPA.name())
+            .queryParam("beerStyle", BeerStyle.IPA.name()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()", is(310)));
+  }
+
+  @Test
+  @SneakyThrows
   void testListBeersByStyle() {
     mockMvc.perform(get(BEER_PATH)
             .queryParam("beerStyle", BeerStyle.IPA.name()))
@@ -73,7 +110,7 @@ class BeerControllerIT {
   @SneakyThrows
   void testListBeersByName() {
     mockMvc.perform(get(BEER_PATH)
-        .queryParam("beerName", "IPA"))
+            .queryParam("beerName", "IPA"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()", is(336)));
   }
@@ -97,7 +134,7 @@ class BeerControllerIT {
 
   @Test
   void testListBeers() {
-    List<BeerDTO> dtos = beerController.listBeers(null, null);
+    List<BeerDTO> dtos = beerController.listBeers(null, null, null);
 
     assertThat(dtos.size()).isEqualTo(2413);
   }
@@ -109,7 +146,7 @@ class BeerControllerIT {
   @Rollback
   void testEmptyList() {
     beerRepository.deleteAll();
-    List<BeerDTO> dtos = beerController.listBeers(null, null);
+    List<BeerDTO> dtos = beerController.listBeers(null, null, null);
 
     assertThat(dtos.size()).isEqualTo(0);
   }

@@ -71,11 +71,13 @@ public class BeerController {
 
   @GetMapping(BEER_PATH)
   public List<BeerDTO> listBeers(@RequestParam(required = false) String beerName,
-      @RequestParam(required = false) BeerStyle beerStyle) {
+      @RequestParam(required = false) BeerStyle beerStyle,
+      @RequestParam(required = false) Boolean showInventory) {
 
     BeerFilterDTO beerFilterDto = BeerFilterDTO.builder()
         .beerName(beerName)
         .beerStyle(beerStyle)
+        .showInventory(showInventory)
         .build();
 
     return beerService.listBeers(beerFilterDto);

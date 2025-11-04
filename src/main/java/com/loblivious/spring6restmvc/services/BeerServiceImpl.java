@@ -30,8 +30,13 @@ public class BeerServiceImpl implements BeerService {
     Iterable<Beer> beers = beerRepository.findAll(predicate);
 
     return StreamSupport.stream(beers.spliterator(), false)
-        .map(beerMapper::beerToBeerDto)
-        .toList();
+        .map((beer) -> {
+          BeerDTO beerDto = beerMapper.beerToBeerDto(beer);
+          if (beerFilter.showInventory() != null && !beerFilter.showInventory()) {
+            beerDto.setQuantityOnHand(null);
+          }
+          return beerDto;
+        }).toList();
   }
 
   @Override
