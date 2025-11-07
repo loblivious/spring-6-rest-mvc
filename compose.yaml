@@ -1,7 +1,7 @@
 services:
   mysql:
     image: 'mysql:latest'
-    restart: always
+    restart: no
     environment:
       - 'MYSQL_DATABASE=restdb'
       - 'MYSQL_PASSWORD=password'

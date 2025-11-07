@@ -5,10 +5,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Version;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
@@ -26,31 +25,36 @@ import org.hibernate.type.SqlTypes;
 @Builder
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class Customer {
+@AllArgsConstructor
+public class BeerOrder {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  @JdbcTypeCode(SqlTypes.CHAR)
+  @JdbcTypeCode(SqlTypes.CHAR) // tells mysql I want to use varchar as the type for uuid
   @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
   private UUID id;
 
-  @NotNull
-  @NotBlank
-  private String name;
-
-  private String email;
-
   @Version
-  private Integer version;
+  private Long version;
 
   @CreationTimestamp
+  @Column(updatable = false)
   private LocalDateTime createdDate;
 
   @UpdateTimestamp
-  private LocalDateTime updateDate;
+  private LocalDateTime lastModifiedDate;
 
-  @OneToMany(mappedBy = "customer")
-  private Set<BeerOrder> beerOrders;
+  public boolean isNew() {
+    return this.id == null;
+  }
+
+  private String customerRef;
+
+  @ManyToOne
+  private Customer customer;
+
+  @OneToMany(mappedBy = "beerOrder")
+  private Set<BeerOrderLine> beerOrderLines;
+
 }
