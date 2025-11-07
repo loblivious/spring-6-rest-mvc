@@ -10,6 +10,7 @@ import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -51,6 +52,7 @@ public class Customer {
   @UpdateTimestamp
   private LocalDateTime updateDate;
 
+  @Builder.Default
   @OneToMany(mappedBy = "customer")
-  private Set<BeerOrder> beerOrders;
+  private Set<BeerOrder> beerOrders = new HashSet<>();
 }

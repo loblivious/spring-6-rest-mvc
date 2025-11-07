@@ -11,7 +11,6 @@ import jakarta.persistence.Version;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,8 +25,18 @@ import org.hibernate.type.SqlTypes;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class BeerOrder {
+
+  public BeerOrder(UUID id, Long version, LocalDateTime createdDate, LocalDateTime lastModifiedDate,
+      String customerRef, Customer customer, Set<BeerOrderLine> beerOrderLines) {
+    this.id = id;
+    this.version = version;
+    this.createdDate = createdDate;
+    this.lastModifiedDate = lastModifiedDate;
+    this.customerRef = customerRef;
+    this.setCustomer(customer);
+    this.beerOrderLines = beerOrderLines;
+  }
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -53,6 +62,11 @@ public class BeerOrder {
 
   @ManyToOne
   private Customer customer;
+
+  public void setCustomer(Customer customer) {
+    this.customer = customer;
+    this.customer.getBeerOrders().add(this);
+  }
 
   @OneToMany(mappedBy = "beerOrder")
   private Set<BeerOrderLine> beerOrderLines;
