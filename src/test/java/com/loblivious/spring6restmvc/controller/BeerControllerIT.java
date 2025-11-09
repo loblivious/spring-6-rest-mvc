@@ -2,9 +2,13 @@ package com.loblivious.spring6restmvc.controller;
 
 import static com.loblivious.spring6restmvc.controller.BeerController.BEER_PATH;
 import static com.loblivious.spring6restmvc.controller.BeerController.BEER_PATH_ID;
+import static com.loblivious.spring6restmvc.controller.BeerControllerTest.PASSWORD;
+import static com.loblivious.spring6restmvc.controller.BeerControllerTest.USERNAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -59,13 +63,23 @@ class BeerControllerIT {
 
   @BeforeEach
   void setUp() {
-    mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+    mockMvc = MockMvcBuilders.webAppContextSetup(wac).apply(springSecurity()).build();
+  }
+
+  @Test
+  @SneakyThrows
+  void testNoAuth() {
+    mockMvc.perform(get(BEER_PATH)
+            .queryParam("beerStyle", BeerStyle.IPA.name())
+            .queryParam("size", Integer.toString(1000)))
+        .andExpect(status().isUnauthorized());
   }
 
   @Test
   @SneakyThrows
   void tesListBeersByStyleAndNameShowInventoryTruePage2() {
     mockMvc.perform(get(BeerController.BEER_PATH)
+            .with(httpBasic(USERNAME, PASSWORD))
             .queryParam("beerName", "IPA")
             .queryParam("beerStyle", BeerStyle.IPA.name())
             .queryParam("showInventory", "true")
@@ -80,6 +94,7 @@ class BeerControllerIT {
   @SneakyThrows
   void testListBeerByStyleAndNameShowInventoryFalse() {
     mockMvc.perform(get(BEER_PATH)
+            .with(httpBasic(USERNAME, PASSWORD))
             .queryParam("beerName", BeerStyle.IPA.name())
             .queryParam("beerStyle", BeerStyle.IPA.name())
             .queryParam("showInventory", Boolean.toString(false))
@@ -93,6 +108,7 @@ class BeerControllerIT {
   @SneakyThrows
   void testListBeerByStyleAndNameShowInventory() {
     mockMvc.perform(get(BEER_PATH)
+            .with(httpBasic(USERNAME, PASSWORD))
             .queryParam("beerName", BeerStyle.IPA.name())
             .queryParam("beerStyle", BeerStyle.IPA.name())
             .queryParam("showInventory", Boolean.toString(true))
@@ -106,6 +122,7 @@ class BeerControllerIT {
   @SneakyThrows
   void testListBeerByStyleAndName() {
     mockMvc.perform(get(BEER_PATH)
+            .with(httpBasic(USERNAME, PASSWORD))
             .queryParam("beerName", BeerStyle.IPA.name())
             .queryParam("beerStyle", BeerStyle.IPA.name())
             .queryParam("size", Integer.toString(1000)))
@@ -117,6 +134,7 @@ class BeerControllerIT {
   @SneakyThrows
   void testListBeersByStyle() {
     mockMvc.perform(get(BEER_PATH)
+            .with(httpBasic(USERNAME, PASSWORD))
             .queryParam("beerStyle", BeerStyle.IPA.name())
             .queryParam("size", Integer.toString(1000)))
         .andExpect(status().isOk())
@@ -127,6 +145,7 @@ class BeerControllerIT {
   @SneakyThrows
   void testListBeersByName() {
     mockMvc.perform(get(BEER_PATH)
+            .with(httpBasic(USERNAME, PASSWORD))
             .queryParam("beerName", "IPA")
             .queryParam("size", Integer.toString(1000)))
         .andExpect(status().isOk())
@@ -143,6 +162,7 @@ class BeerControllerIT {
         "New Name 012345678901234567890123456789012345678901234567890123456789");
 
     mockMvc.perform(patch(BEER_PATH_ID, beer.getId())
+            .with(httpBasic(USERNAME, PASSWORD))
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(beerMap)))
