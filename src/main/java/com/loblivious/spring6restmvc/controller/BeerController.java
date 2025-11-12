@@ -80,6 +80,8 @@ public class BeerController {
       @RequestParam(required = false) Boolean showInventory,
       @PageableDefault(size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORTING_BY) Pageable pageable) {
 
+    log.info("Received list beers request.");
+
     BeerFilterDTO beerFilterDto = BeerFilterDTO.builder()
         .beerName(beerName)
         .beerStyle(beerStyle)
